@@ -1,10 +1,14 @@
 /**
+
 * Library for reading TSIC digital temperature sensors like 305 and 206
 * using the Arduino platform.
 *
 * Copyright: Rolf Wagner
 * Date: March 9th 2014
 * 
+* Version 2.2 (changes by Eric Bobillier, 2015-08-27)
+		- Add new function to convert correctly TSic 506 (calc_Celsius_506)				
+		- Add new example for test of this new function (example_tsic_506.ino).
 * Version 2.1 (changes by Matthias Eibl, 2015-03-31)
 * 		- if the TSIC returns an error, the Power PIN is 
 * 		  turned LOW (otherwise it produces errors as the 
@@ -87,6 +91,14 @@ float TSIC::calc_Celsius(uint16_t *temperature16){
 	uint16_t temp_value16 = 0;
 	float celsius = 0;
 	temp_value16 = ((*temperature16 * 250L) >> 8) - 500;			// calculate temperature *10, i.e. 26,4 = 264
+	celsius = temp_value16 / 10 + (float) (temp_value16 % 10) / 10;	// shift comma by 1 digit e.g. 26,4°C
+	return celsius;
+}
+
+float TSIC::calc_Celsius_506(uint16_t *temperature16){
+	uint16_t temp_value16 = 0;
+	float celsius = 0;
+	temp_value16 = ((*temperature16 * 175L) >> 9) - 100;			// calculate temperature *10, i.e. 26,4 = 264
 	celsius = temp_value16 / 10 + (float) (temp_value16 % 10) / 10;	// shift comma by 1 digit e.g. 26,4°C
 	return celsius;
 }
